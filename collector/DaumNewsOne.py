@@ -2,7 +2,7 @@
 # 1. 프로젝트(cnu_ai_senti_analysis-main)
 #  2. python package(collector)
 #   3. python file(test.py, DaumNewsOne.py)
-# - python package : python file들을 모아두는 폴더
+# - python package : python file 들을 모아두는 폴더
 #                   폴더 아이콘안에 구멍 뚫려있음
 
 # colab : 분석, 인공지능에 많이 사용
@@ -25,6 +25,8 @@
 import requests # 책 전체를 빌려옴
 from bs4 import BeautifulSoup # bs4 라는 책에서 BeautifulSoup 1개 파트만 빌려옴
 
+BeautifulSoup()
+
 # 목표 : Daum 뉴스 웹페이지의 제목과 본문 데이터를 수집
 #   1. url : https://v.daum.net/v/20221006102034412
 url = 'https://v.daum.net/v/20221006102034412'
@@ -43,8 +45,27 @@ doc = BeautifulSoup(result.text, 'html.parser')
 # index    0  1  2  3   4
 #       - [5, 6, 9, 10, 15] : List 내에는 다양한 데이터 저장 가능
 
-title = doc.select('h3.tit_view')[0].get_text()
+title = doc.select('h3.tit_view')[0].get_text()  # h3 태그중에 이름이 tit_view 를 갖는 select
+
+# html -> tag + 선택자
+
+#   - tag : 기본적으로 정의 돼있음(h3, p, div, span, ...)
+
+contents = doc.select('section p')  # section 태그를 부모로 둔 모든 자식 p 태그를 select
+
 
 print(f'뉴스제목 : {title}')
 
-BeautifulSoup()
+# contents = [<p1>, <p2>, <p3>, <p4>, ...] : 복수의 본문 포함
+# <p1> = <p>왱알왱알1</p>
+# <p2> = <p>왱알왱알2</p>
+# <p3> = <p>왱알왱알3</p>
+# <p4> = <p>왱알왱알4</p>
+
+# 반복적인 작업 -> for 문
+
+content = ''
+for line in contents:  # 순서대로 <p>를 가져와서 line 에 넣고 다음 코드 실행
+    content += line.get_text()
+print(f'뉴스본문 : {content}')
+
