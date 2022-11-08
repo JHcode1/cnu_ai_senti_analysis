@@ -63,8 +63,33 @@ def movie_review_crawler(movie_code):
             review = one.select('div.score_reple > p > span')[-1].get_text().strip()  # -1 : 맨 마지막 값 의미, strip : 공백 지움 함수
             score = one.select('div.star_score > em')[0].get_text()
 
-            print(f'# Score : {score}')
-            print(f'# Review : {review}\n')
+            # 전처리 : 날짜 시간 -> 날짜만 추출
+            # 예 : 2022.10.19 15:28 -> 22.10.19
+            # - 날짜는 항상 16글자로 구성 (01.01)
+            original_date = one.select('div.score_reple dt > em')[1].get_text()
+
+            # 문자열 추출
+            # [시작:끝+1], 끝은 포함x
+            # [:15] 0~14
+            # [3:] 8~끝까지
+            date = original_date[:10]  # 문자열 추출
+
+            original_writer = one.select('div.score_reple dt > em')[0].get_text().strip()
+            idx_end = original_writer.find('(')  # (의 인덱스 번호
+            writer = original_writer[:idx_end]
+
+            count += 1
+            print(f"## 리뷰_{count} #####################################################################################")
+            print(f'# Review: {review}')
+            print(f'# writer: {writer}')
+            print(f'# Score: {score}')
+            print(f'# Date: {date}\n')
 
         break
+
+        # 수집(리뷰) -> 저장(db) -> 전처리, 탐색 -> 딥러닝모델 학습 & 평가(긍부정 분석기) -> 시각화 or 실제 데이터 서비스
+
+        # MongoDB 데이터베이스
+        # 1. Local(컴퓨터) 설치
+        # 2. 웹 클라우드 사용(ip, 내부 ip 사용 x)
 
